@@ -10,6 +10,8 @@
 
 @interface Subsection (Additions)
 
-- (void)initWithDictionary:(NSDictionary *)dictionary;
+- (NSURL *)url;
+- (NSURLRequest*)urlRequest;
+- (void)initWithDictionary:(NSDictionary *)dictionary andRootURLString:(NSString*)rootURLString;
 
 @end

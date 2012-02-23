@@ -8,6 +8,7 @@
 
 #import "MainViewController.h"
 #import "Section+Additions.h"
+#import "Subsection+Additions.h"
 #import "DataManager.h"
 #import "UIBarButtonItem+Additions.h"
 
@@ -21,7 +22,9 @@
 @synthesize panGestureRecogniser=_panGestureRecogniser;
 @synthesize tapGestureRecogniser=_tapGestureRecogniser;
 @synthesize gestureCatcher=_gestureCatcher;
+
 @synthesize expandedSectionIndex=_expandedSectionIndex;
+@synthesize subsections=_subsections;
 
 - (void)didReceiveMemoryWarning
 {
@@ -97,7 +100,13 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.sections count] + (self.expandedSectionIndex >= 0 ? 4 : 0);
+    if (self.expandedSectionIndex >= 0) 
+    {
+        Section* navSection = [self.sections objectAtIndex:self.expandedSectionIndex];
+        return [self.sections count] + [navSection.subsections count];
+    }
+    else
+        return [self.sections count];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -116,24 +125,35 @@
     if(!cell)
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
     
-    NSLog(@"Index Row: %d", indexPath.row);
-    
-    if (self.expandedSectionIndex >= 0 && indexPath.row > self.expandedSectionIndex && indexPath.row <= self.expandedSectionIndex + 4) 
-    {
-        cell.textLabel.text = [NSString stringWithFormat:@"%d", indexPath.row];
     cell.backgroundView = [[UIView alloc] initWithFrame:cell.frame];
-    cell.backgroundView.backgroundColor = [UIColor greenColor];
+    
+    NSInteger index = indexPath.row;
+    NSLog(@"Index Row: %d", index);
+    NSLog(@"Expanded: %d", self.expandedSectionIndex);
+    NSLog(@"Range: %d", self.expandedSectionIndex + [self.subsections count]);
+    
+    if (self.expandedSectionIndex >= 0 && 
+        indexPath.row > self.expandedSectionIndex && 
+        indexPath.row <= self.expandedSectionIndex + [self.subsections count]) 
+    {
+        Subsection* subsection = [self.subsections objectAtIndex:indexPath.row - self.expandedSectionIndex - 1];
+        cell.textLabel.text = subsection.title;
+        cell.backgroundView.backgroundColor = [UIColor orangeColor];
     }
     else
     {
-        section = [self.sections objectAtIndex:indexPath.row - (self.expandedSectionIndex >= 0 ? 4 : 0)];
+        section = [self.sections objectAtIndex:indexPath.row]; 
+        if (self.expandedSectionIndex >= 0 && 
+            index > self.expandedSectionIndex + [self.subsections count])
+            index = index - self.expandedSectionIndex + [self.subsections count];
+        section = [self.sections objectAtIndex:index];
         cell.textLabel.text = section.title;
         cell.backgroundView = nil;
+        cell.selectedBackgroundView.backgroundColor = [UIColor colorWithWhite:1.f alpha:0.1f];     
     }
     cell.textLabel.textAlignment = UITextAlignmentLeft;
     cell.textLabel.backgroundColor = [UIColor clearColor];
     cell.selectedBackgroundView = [[UIView alloc] initWithFrame:cell.frame];
-    cell.selectedBackgroundView.backgroundColor = [UIColor colorWithWhite:1.f alpha:0.1f];     
     
     cell.textLabel.textColor = [UIColor whiteColor];
     
@@ -143,29 +163,77 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    Section* section = [self.sections objectAtIndex:indexPath.row];
-//    [self.webViewController transitionToSection:section];
-//    [self showHideTableView];
-    NSArray* indexPaths = [NSArray arrayWithObjects:
-                           [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:0],
-                           [NSIndexPath indexPathForRow:indexPath.row + 2 inSection:0],
-                           [NSIndexPath indexPathForRow:indexPath.row + 3 inSection:0],
-                           [NSIndexPath indexPathForRow:indexPath.row + 4 inSection:0], nil];
+    NSInteger index = indexPath.row;
+    if (self.expandedSectionIndex >= 0 && 
+        index > self.expandedSectionIndex &&
+        index <= self.expandedSectionIndex + [self.subsections count])
+    {
+        Subsection* subsection = [self.subsections objectAtIndex:index - self.expandedSectionIndex - 1];
+        [self.webViewController transitionToSubsection:subsection];
+        [self showHideTableView];
+    }
+    else 
+    {
+        if (self.expandedSectionIndex >= 0 &&
+            index > self.expandedSectionIndex) 
+            index = index - [self.subsections count];
+        
+        Section* section = [self.sections objectAtIndex:index];
+        if ([section.subsections count]) 
+        {
+            if (self.expandedSectionIndex >= 0) 
+            {
+                Section* expandedSection = [self.sections objectAtIndex:self.expandedSectionIndex];
+                [self showHideSubsectionsInSection:expandedSection forRow:self.expandedSectionIndex];  
+            }
+            else 
+            {
+                [self showHideSubsectionsInSection:section forRow:indexPath.row];
+            }
+            
+        }
+        else 
+        {
+            if (self.expandedSectionIndex >= 0) 
+            {
+                Section* expandedSection = [self.sections objectAtIndex:self.expandedSectionIndex];
+                [self showHideSubsectionsInSection:expandedSection forRow:self.expandedSectionIndex];            
+            }
+            
+            [self.webViewController transitionToSection:section];
+            [self showHideTableView];
+
+        }
+    }
+}
+
+- (void)showHideSubsectionsInSection:(Section*)section forRow:(NSInteger)row
+{
+    if(!self.subsections)
+        self.subsections = [section.subsections sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"position" ascending:YES]]];
+    
+    NSMutableArray* mutableArray = [NSMutableArray arrayWithCapacity:[self.subsections count]];
+    for (int i = 0; i < [self.subsections count]; i++) 
+        [mutableArray addObject:[NSIndexPath indexPathForRow:row + i + 1 inSection:0]];
+    
+    NSLog(@"Rows... %@", mutableArray);
+    
     if (self.expandedSectionIndex < 0) 
     {
-        self.expandedSectionIndex = indexPath.row;
-        
+        self.expandedSectionIndex = row;
+        NSLog(@"INSERTING");
         [self.tableView beginUpdates];
-        [self.tableView insertRowsAtIndexPaths:indexPaths
+        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithArray:mutableArray]
                               withRowAnimation:UITableViewRowAnimationTop];
         [self.tableView endUpdates];
     }
     else 
     {
+        self.subsections = nil;
         self.expandedSectionIndex = -1;
-        
+        NSLog(@"DELETING");
         [self.tableView beginUpdates];
-        [self.tableView deleteRowsAtIndexPaths:indexPaths 
+        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithArray:mutableArray] 
                               withRowAnimation:UITableViewRowAnimationTop];
         [self.tableView endUpdates];
     }

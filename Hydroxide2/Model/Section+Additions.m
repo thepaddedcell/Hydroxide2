@@ -31,7 +31,7 @@
     for (NSDictionary* subSectionDict in [dictionary valueForKey:@"subsections"]) 
     {
         Subsection* subSection = [Subsection createEntity];
-        [subSection initWithDictionary:subSectionDict];
+        [subSection initWithDictionary:subSectionDict andRootURLString:rootURLString];
         subSection.section = self;
     }
 }

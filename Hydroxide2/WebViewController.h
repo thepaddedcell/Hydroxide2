@@ -9,14 +9,17 @@
 #import <UIKit/UIKit.h>
 #import "HydroxideWebView.h"
 #import "Section+Additions.h"
+#import "Subsection+Additions.h"
 
 @interface WebViewController : UIViewController <HydroxideWebViewDelegate>
 
 @property (nonatomic, strong) IBOutlet HydroxideWebView* webView;
 @property (nonatomic, strong) IBOutlet HydroxideWebView* offscreenWebView;
 @property (nonatomic, strong) Section* section;
+@property (nonatomic, strong) Subsection* subsection;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil section:(Section*)section;
 - (void)transitionToSection:(Section*)section;
+- (void)transitionToSubsection:(Subsection*)subsection;
 
 @end

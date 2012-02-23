@@ -15,6 +15,7 @@
 @synthesize webView=_webView;
 @synthesize offscreenWebView=_offscreenWebView;
 @synthesize section=_section;
+@synthesize subsection=_subsection;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil section:(Section*)section
 {
@@ -62,6 +63,7 @@
 - (void)transitionToSection:(Section*)section
 {
     self.section = section;
+    self.subsection = nil;
     self.title = self.section.title;
     [self.offscreenWebView loadURL:self.section.url];
     
@@ -73,7 +75,30 @@
                      completion:^(BOOL finished) {
                          HydroxideWebView* wv = self.webView;
                          self.webView = self.offscreenWebView;
-                         self.offscreenWebView = wv;        
+                         self.offscreenWebView = wv; 
+                         self.webView.userInteractionEnabled = YES;
+                         self.offscreenWebView.userInteractionEnabled = YES;
+                     }];
+}
+
+- (void)transitionToSubsection:(Subsection *)subsection
+{
+    self.subsection = subsection;
+    self.section = nil;
+    self.title = self.subsection.title;
+    [self.offscreenWebView loadURL:self.subsection.url];
+    
+    [UIView animateWithDuration:1.f 
+                     animations:^{
+                         self.webView.alpha = 0.f;
+                         self.offscreenWebView.alpha = 1.f;
+                     }
+                     completion:^(BOOL finished) {
+                         HydroxideWebView* wv = self.webView;
+                         self.webView = self.offscreenWebView;
+                         self.offscreenWebView = wv; 
+                         self.webView.userInteractionEnabled = YES;
+                         self.offscreenWebView.userInteractionEnabled = YES;
                      }];
 }
 

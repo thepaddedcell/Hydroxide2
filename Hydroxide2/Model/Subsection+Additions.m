@@ -10,12 +10,22 @@
 
 @implementation Subsection (Additions)
 
-- (void)initWithDictionary:(NSDictionary *)dictionary
+- (void)initWithDictionary:(NSDictionary *)dictionary andRootURLString:(NSString*)rootURLString
 {
     self.title = [dictionary valueForKey:@"title"];
     self.subtitle = [dictionary valueForKey:@"subtitle"];
-    self.urlString = [dictionary valueForKey:@"page"];
+    self.urlString = [NSString stringWithFormat:@"%@%@", rootURLString, [dictionary valueForKey:@"page"]];
     self.position = [NSNumber numberWithInt:[[dictionary valueForKey:@"position"] intValue]];
+}
+
+- (NSURL *)url
+{
+    return [NSURL URLWithString:[self urlString]];
+}
+
+- (NSURLRequest*)urlRequest
+{
+    return [NSURLRequest requestWithURL:[self url]];
 }
 
 @end

@@ -23,7 +23,10 @@
 @property (nonatomic, strong) UITapGestureRecognizer* tapGestureRecogniser;
 
 @property NSInteger expandedSectionIndex;
+@property (nonatomic, strong) NSArray* subsections;
 
 - (void)showHideTableView;
+- (void)showHideSubsectionsInSection:(Section*)section forRow:(NSInteger)row;
+
 
 @end
