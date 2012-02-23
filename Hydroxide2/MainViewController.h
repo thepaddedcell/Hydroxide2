@@ -22,6 +22,8 @@
 @property (nonatomic, strong) UIPanGestureRecognizer* panGestureRecogniser;
 @property (nonatomic, strong) UITapGestureRecognizer* tapGestureRecogniser;
 
+@property NSInteger expandedSectionIndex;
+
 - (void)showHideTableView;
 
 @end

@@ -21,6 +21,7 @@
 @synthesize panGestureRecogniser=_panGestureRecogniser;
 @synthesize tapGestureRecogniser=_tapGestureRecogniser;
 @synthesize gestureCatcher=_gestureCatcher;
+@synthesize expandedSectionIndex=_expandedSectionIndex;
 
 - (void)didReceiveMemoryWarning
 {
@@ -41,6 +42,7 @@
     
     
     self.currentSectionId = 0;
+    self.expandedSectionIndex = -1;
     self.sections = [Section findAllSortedBy:@"position" ascending:YES];
     Section* section;
     if ([self.sections count])
@@ -95,7 +97,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.sections count];
+    return [self.sections count] + (self.expandedSectionIndex >= 0 ? 4 : 0);
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -113,15 +115,25 @@
     cell = [self.tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if(!cell)
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
-    section = [self.sections objectAtIndex:indexPath.row];
+    
+    NSLog(@"Index Row: %d", indexPath.row);
+    
+    if (self.expandedSectionIndex >= 0 && indexPath.row > self.expandedSectionIndex && indexPath.row <= self.expandedSectionIndex + 4) 
+    {
+        cell.textLabel.text = [NSString stringWithFormat:@"%d", indexPath.row];
+    cell.backgroundView = [[UIView alloc] initWithFrame:cell.frame];
+    cell.backgroundView.backgroundColor = [UIColor greenColor];
+    }
+    else
+    {
+        section = [self.sections objectAtIndex:indexPath.row - (self.expandedSectionIndex >= 0 ? 4 : 0)];
+        cell.textLabel.text = section.title;
+        cell.backgroundView = nil;
+    }
     cell.textLabel.textAlignment = UITextAlignmentLeft;
     cell.textLabel.backgroundColor = [UIColor clearColor];
-    cell.textLabel.text = section.title;
-//    cell.backgroundView = [[UIView alloc] initWithFrame:cell.frame];
-//    cell.backgroundView.backgroundColor = [UIColor colorWithWhite:1.f alpha:0.3f / (indexPath.row + 1)];
-    
     cell.selectedBackgroundView = [[UIView alloc] initWithFrame:cell.frame];
-    cell.selectedBackgroundView.backgroundColor = [UIColor colorWithWhite:1.f alpha:0.1f]; 
+    cell.selectedBackgroundView.backgroundColor = [UIColor colorWithWhite:1.f alpha:0.1f];     
     
     cell.textLabel.textColor = [UIColor whiteColor];
     
@@ -131,9 +143,32 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    Section* section = [self.sections objectAtIndex:indexPath.row];
-    [self.webViewController transitionToSection:section];
-    [self showHideTableView];
+//    Section* section = [self.sections objectAtIndex:indexPath.row];
+//    [self.webViewController transitionToSection:section];
+//    [self showHideTableView];
+    NSArray* indexPaths = [NSArray arrayWithObjects:
+                           [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:0],
+                           [NSIndexPath indexPathForRow:indexPath.row + 2 inSection:0],
+                           [NSIndexPath indexPathForRow:indexPath.row + 3 inSection:0],
+                           [NSIndexPath indexPathForRow:indexPath.row + 4 inSection:0], nil];
+    if (self.expandedSectionIndex < 0) 
+    {
+        self.expandedSectionIndex = indexPath.row;
+        
+        [self.tableView beginUpdates];
+        [self.tableView insertRowsAtIndexPaths:indexPaths
+                              withRowAnimation:UITableViewRowAnimationTop];
+        [self.tableView endUpdates];
+    }
+    else 
+    {
+        self.expandedSectionIndex = -1;
+        
+        [self.tableView beginUpdates];
+        [self.tableView deleteRowsAtIndexPaths:indexPaths 
+                              withRowAnimation:UITableViewRowAnimationTop];
+        [self.tableView endUpdates];
+    }
 }
 
 #pragma mark - NavigationController Delegate
