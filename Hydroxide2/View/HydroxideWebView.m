@@ -130,8 +130,9 @@
     if ([url.scheme isEqualToString:@"native"]) 
     {
         info = [NSMutableDictionary dictionaryWithObject:[url host] forKey:kHydroxideWebMessageInfoKey];
-        if ([url query]) 
+        if ([url query])            
         {
+            [info setObject:[url query] forKey:@"query"];
             NSArray* args = [[url query] componentsSeparatedByString:@"&"];
             for (NSString* arg in args) 
             {

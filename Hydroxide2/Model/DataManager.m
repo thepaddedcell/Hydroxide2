@@ -16,10 +16,12 @@ const NSString* kHydroxideAppRequiresUpdate = @"kHydroxideAppRequiresUpdate";
 
 @implementation DataManager
 
+@synthesize detailURLString;
+
 - (void)updateSections
 {
     // Override this URL with your configuration file
-    NSURL* url = [NSURL URLWithString:@"http://127.0.0.1/config.json"];
+    NSURL* url = [NSURL URLWithString:@"http://news.devuatprev.ninemsn.com.au/app/config.json"];
     NSURLRequest* request = [NSURLRequest requestWithURL:url];
     AFJSONRequestOperation* configOperation = [AFJSONRequestOperation 
                                                JSONRequestOperationWithRequest:request 
@@ -38,8 +40,11 @@ const NSString* kHydroxideAppRequiresUpdate = @"kHydroxideAppRequiresUpdate";
                                                    //Now create the new ones from the JSON
                                                    NSDictionary* config = JSON;
                                                    NSArray* sectionArray = [config objectForKey:@"sections"];
+                                                   NSString* rootURLString = [config valueForKey:@"rootURL"];
+                                                   self.detailURLString = [NSString stringWithFormat:@"%@%@", rootURLString, [config valueForKey:@"detailURL"]];
+                                                                            
                                                    for (NSDictionary* sectionDictionary in sectionArray) 
-                                                       [Section createSectionWithDictionary:sectionDictionary];
+                                                       [Section createSectionWithDictionary:sectionDictionary andRootURLString:rootURLString];
                                                    
                                                    //Save the CoreData Context
                                                    [[NSManagedObjectContext contextForCurrentThread] save];

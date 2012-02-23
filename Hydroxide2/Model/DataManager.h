@@ -16,6 +16,8 @@ extern NSString* kHydroxideAppRequiresUpdate;
 
 @interface DataManager : NSObject
 
+@property (nonatomic, retain) NSString* detailURLString;
+
 + (DataManager *)sharedDataManager;
 
 - (void)updateSections;

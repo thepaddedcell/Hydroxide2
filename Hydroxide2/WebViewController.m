@@ -8,22 +8,24 @@
 
 #import "WebViewController.h"
 #import "Section+Additions.h"
+#import "DataManager.h"
 
 @implementation WebViewController
 
 @synthesize webView=_webView;
 @synthesize offscreenWebView=_offscreenWebView;
-@synthesize sections=_sections;
+@synthesize section=_section;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil sections:(NSArray *)sections
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil section:(Section*)section
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) 
     {
-        self.sections = sections;
+        self.section = section;
+        self.title = self.section.title;
         //force the webview to load early so we can load a URL from the Parent View Controller
         self.webView.frame = self.view.bounds;
-        self.offscreenWebView.frame = self.view.bounds;
+        self.offscreenWebView.frame = self.webView.frame;
     }
     return self;
 }
@@ -41,6 +43,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self.webView loadURL:self.section.url];
 }
 
 - (void)viewDidUnload
@@ -56,6 +59,24 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
+- (void)transitionToSection:(Section*)section
+{
+    self.section = section;
+    self.title = self.section.title;
+    [self.offscreenWebView loadURL:self.section.url];
+    
+    [UIView animateWithDuration:1.f 
+                     animations:^{
+                         self.webView.alpha = 0.f;
+                         self.offscreenWebView.alpha = 1.f;
+                     }
+                     completion:^(BOOL finished) {
+                         HydroxideWebView* wv = self.webView;
+                         self.webView = self.offscreenWebView;
+                         self.offscreenWebView = wv;        
+                     }];
+}
+
 # pragma mark - Hydroxide Webview Delegate
 
 - (void)webView:(HydroxideWebView *)webView messageFromWeb:(NSDictionary *)info
@@ -64,33 +85,14 @@
     if ([message isEqualToString:@"detail"]) 
     {
         //push a detail view onto the stack
-    }
-    
-    if ([message isEqualToString:@"goto"])
-    {
-        NSString* sectionName = [info valueForKey:@"view"];
-        //switch sections, with some animation
-        for (Section* section in self.sections) 
-        {
-            if ([section.title isEqualToString:sectionName]) 
-            {
-                [self.offscreenWebView loadURL:section.url];
-                break;
-            }
-        }
-        
-        CGRect webviewFrame = self.webView.frame;
-        CGRect offscreenWebViewFrame = self.offscreenWebView.frame;
-        
-        [UIView animateWithDuration:0.3f animations:^{
-            self.webView.frame = offscreenWebViewFrame;
-            self.offscreenWebView.frame = webviewFrame;
-        }
-         completion:^(BOOL finished) {
-             HydroxideWebView* wv = self.webView;
-             self.webView = self.offscreenWebView;
-             self.offscreenWebView = wv;
-         }];
+        UIViewController* viewController = [[UIViewController alloc] init];
+        HydroxideWebView* webView = [[HydroxideWebView alloc] initWithFrame:self.webView.frame];
+        [viewController.view addSubview:webView];
+        NSString* type = [info valueForKey:@"type"];
+        viewController.title = [type capitalizedString];
+        NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"%@&%@", [DataManager sharedDataManager].detailURLString, [info valueForKey:@"query"]]];
+        [webView loadURL:url];
+        [self.navigationController pushViewController:viewController animated:YES];
     }
 }
 

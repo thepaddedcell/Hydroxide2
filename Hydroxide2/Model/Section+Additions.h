@@ -13,7 +13,7 @@
 - (NSURL*)url;
 - (NSURLRequest*)urlRequest;
 
-- (void)initWithDictionary:(NSDictionary*)dictionary;
-+ (Section *)createSectionWithDictionary:(NSDictionary*)dictionary;
+- (void)initWithDictionary:(NSDictionary *)dictionary andRootURLString:(NSString*)rootURLString;
++ (Section *)createSectionWithDictionary:(NSDictionary *)dictionary andRootURLString:(NSString*)rootURLString;
 
 @end

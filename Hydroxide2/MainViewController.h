@@ -8,14 +8,19 @@
 
 #import <UIKit/UIKit.h>
 #import "WebViewController.h"
+#import "Section+Additions.h"
 
-@interface MainViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate>
+@interface MainViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, UIGestureRecognizerDelegate>
 
 @property (nonatomic, strong) UITableView* tableView;
 @property (nonatomic, strong) UINavigationController* navController;
 @property (nonatomic, strong) WebViewController* webViewController;
 @property (nonatomic, strong) NSArray* sections;
 @property (nonatomic) NSInteger currentSectionId;
+
+@property (nonatomic, strong) UIView* gestureCatcher;
+@property (nonatomic, strong) UIPanGestureRecognizer* panGestureRecogniser;
+@property (nonatomic, strong) UITapGestureRecognizer* tapGestureRecogniser;
 
 - (void)showHideTableView;
 

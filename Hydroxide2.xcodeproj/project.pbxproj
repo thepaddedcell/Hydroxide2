@@ -49,6 +49,9 @@
 		893D295D14EC567E00FE9405 /* Subsection+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 893D293C14EC567E00FE9405 /* Subsection+Additions.m */; };
 		893D295E14EC567E00FE9405 /* Subsection.m in Sources */ = {isa = PBXBuildFile; fileRef = 893D293E14EC567E00FE9405 /* Subsection.m */; };
 		893D296114EC593E00FE9405 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 893D295F14EC591A00FE9405 /* CoreData.framework */; };
+		894EF9B814F62A77007F462E /* header@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 894EF9B614F62A77007F462E /* header@2x.png */; };
+		894EF9B914F62A77007F462E /* menu@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 894EF9B714F62A77007F462E /* menu@2x.png */; };
+		894EF9BE14F63647007F462E /* UIBarButtonItem+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 894EF9BD14F63647007F462E /* UIBarButtonItem+Additions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -134,6 +137,10 @@
 		893D293E14EC567E00FE9405 /* Subsection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Subsection.m; sourceTree = "<group>"; };
 		893D293F14EC567E00FE9405 /* SynthesizeSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynthesizeSingleton.h; sourceTree = "<group>"; };
 		893D295F14EC591A00FE9405 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		894EF9B614F62A77007F462E /* header@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "header@2x.png"; sourceTree = "<group>"; };
+		894EF9B714F62A77007F462E /* menu@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "menu@2x.png"; sourceTree = "<group>"; };
+		894EF9BC14F63647007F462E /* UIBarButtonItem+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+Additions.h"; sourceTree = "<group>"; };
+		894EF9BD14F63647007F462E /* UIBarButtonItem+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+Additions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -182,6 +189,7 @@
 		893D28D814EC543E00FE9405 /* Hydroxide2 */ = {
 			isa = PBXGroup;
 			children = (
+				894EF9BB14F6362B007F462E /* Helpers */,
 				893D28F814EC567E00FE9405 /* Externals */,
 				893D293014EC567E00FE9405 /* Model */,
 				893D28F414EC554300FE9405 /* View */,
@@ -194,6 +202,7 @@
 				893D28EF14EC54DF00FE9405 /* WebViewController.h */,
 				893D28F014EC54DF00FE9405 /* WebViewController.m */,
 				893D28F114EC54DF00FE9405 /* WebViewController.xib */,
+				894EF9B514F62A76007F462E /* Resources */,
 				893D28D914EC543E00FE9405 /* Supporting Files */,
 			);
 			path = Hydroxide2;
@@ -327,6 +336,24 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		894EF9B514F62A76007F462E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				894EF9B614F62A77007F462E /* header@2x.png */,
+				894EF9B714F62A77007F462E /* menu@2x.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		894EF9BB14F6362B007F462E /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				894EF9BC14F63647007F462E /* UIBarButtonItem+Additions.h */,
+				894EF9BD14F63647007F462E /* UIBarButtonItem+Additions.m */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -380,6 +407,8 @@
 				893D28DD14EC543E00FE9405 /* InfoPlist.strings in Resources */,
 				893D28E914EC543E00FE9405 /* MainViewController.xib in Resources */,
 				893D28F314EC54DF00FE9405 /* WebViewController.xib in Resources */,
+				894EF9B814F62A77007F462E /* header@2x.png in Resources */,
+				894EF9B914F62A77007F462E /* menu@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,6 +454,7 @@
 				893D295C14EC567E00FE9405 /* Section.m in Sources */,
 				893D295D14EC567E00FE9405 /* Subsection+Additions.m in Sources */,
 				893D295E14EC567E00FE9405 /* Subsection.m in Sources */,
+				894EF9BE14F63647007F462E /* UIBarButtonItem+Additions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,6 +566,7 @@
 				893D28EE14EC543E00FE9405 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
