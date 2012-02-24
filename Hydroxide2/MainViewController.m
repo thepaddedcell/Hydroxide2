@@ -181,10 +181,12 @@
         Section* section = [self.sections objectAtIndex:index];
         if ([section.subsections count]) 
         {
-            if (self.expandedSectionIndex >= 0) 
+            if (self.expandedSectionIndex >= 0 && index != self.expandedSectionIndex) 
             {
                 Section* expandedSection = [self.sections objectAtIndex:self.expandedSectionIndex];
-                [self showHideSubsectionsInSection:expandedSection forRow:self.expandedSectionIndex];  
+//                [self showHideSubsectionsInSection:expandedSection forRow:self.expandedSectionIndex]; 
+                Section* newExpandedSection = [self.sections objectAtIndex:index];
+                [self showSubsectionsInSection:newExpandedSection forRow:index hidingSubsectionsInSection:expandedSection forRow:self.expandedSectionIndex];
             }
             else 
             {
@@ -205,6 +207,29 @@
 
         }
     }
+}
+
+- (void)showSubsectionsInSection:(Section*)showSection forRow:(NSInteger)showRow hidingSubsectionsInSection:(Section*)hideSection forRow:(NSInteger)hideRow
+{
+    NSArray* currentSubsections = self.subsections;
+    NSArray* newSubsections = [showSection.subsections sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"position" ascending:YES]]];
+    
+    NSMutableArray* newRows = [NSMutableArray arrayWithCapacity:[newSubsections count]];
+    for (int i = 0; i < [newSubsections count]; i++) 
+        [newRows addObject:[NSIndexPath indexPathForRow:showRow + i + 1 inSection:0]];
+    
+    NSMutableArray* currentRows = [NSMutableArray arrayWithCapacity:[currentSubsections count]];
+    for (int i = 0; i < [currentSubsections count]; i++) 
+        [currentRows addObject:[NSIndexPath indexPathForRow:hideRow + i + 1 inSection:0]];
+
+    self.expandedSectionIndex = showRow;
+    
+    [self.tableView beginUpdates];
+    [self.tableView deleteRowsAtIndexPaths:currentRows withRowAnimation:UITableViewRowAnimationTop];
+    [self.tableView insertRowsAtIndexPaths:newRows withRowAnimation:UITableViewRowAnimationTop];
+    [self.tableView endUpdates];
+    
+    self.subsections = newSubsections;
 }
 
 - (void)showHideSubsectionsInSection:(Section*)section forRow:(NSInteger)row

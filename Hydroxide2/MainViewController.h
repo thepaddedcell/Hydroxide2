@@ -27,6 +27,6 @@
 
 - (void)showHideTableView;
 - (void)showHideSubsectionsInSection:(Section*)section forRow:(NSInteger)row;
-
+- (void)showSubsectionsInSection:(Section*)showSection forRow:(NSInteger)showRow hidingSubsectionsInSection:(Section*)hideSection forRow:(NSInteger)hideRow;
 
 @end
