@@ -21,7 +21,7 @@ const NSString* kHydroxideAppRequiresUpdate = @"kHydroxideAppRequiresUpdate";
 - (void)updateSections
 {
     // Override this URL with your configuration file
-    NSURL* url = [NSURL URLWithString:@"http://news.devprev.ninemsn.com.au/app/config.json"];
+    NSURL* url = [NSURL URLWithString:@"http://celebrities.devprev.ninemsn.com.au/App/config.json"];
     NSURLRequest* request = [NSURLRequest requestWithURL:url];
     AFJSONRequestOperation* configOperation = [AFJSONRequestOperation 
                                                JSONRequestOperationWithRequest:request 
