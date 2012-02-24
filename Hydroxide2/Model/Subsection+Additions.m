@@ -28,4 +28,14 @@
     return [NSURLRequest requestWithURL:[self url]];
 }
 
+- (NSURL *)iconUrl
+{
+    return [NSURL URLWithString:[self urlString]];
+}
+
+- (NSURLRequest*)iconUrlRequest
+{
+    return [NSURLRequest requestWithURL:[self url]];
+}
+
 @end

@@ -11,6 +11,8 @@
 #import "Subsection+Additions.h"
 #import "DataManager.h"
 #import "UIBarButtonItem+Additions.h"
+#import "SectionTableViewCell.h"
+#import "SubsectionTableViewCell.h"
 
 @implementation MainViewController
 
@@ -51,12 +53,11 @@
     if ([self.sections count])
         section = [self.sections objectAtIndex:self.currentSectionId];
     
-    self.tableView = [[UITableView alloc] initWithFrame:(CGRect){self.view.bounds.origin.x, self.view.bounds.origin.y, 150, self.view.bounds.size.height} style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc] initWithFrame:(CGRect){self.view.bounds.origin.x, self.view.bounds.origin.y, 225, self.view.bounds.size.height} style:UITableViewStylePlain];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.tableView.backgroundColor = [UIColor colorWithWhite:0.1f alpha:1.f];
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    self.tableView.separatorColor = [UIColor colorWithWhite:0.3f alpha:1.f];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
     
     self.webViewController = [[WebViewController alloc] initWithNibName:@"WebViewController" 
@@ -66,6 +67,8 @@
     [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] 
                                     target:self 
                                     action:@selector(showHideTableView)];
+    self.webViewController.navigationItem.rightBarButtonItem =
+    [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"9_logo"] target:nil action:nil];
     self.navController = [[UINavigationController alloc] initWithRootViewController:self.webViewController];
     [self.navController.navigationBar setBackgroundImage:[UIImage imageNamed:@"header"] forBarMetrics:UIBarMetricsDefault];
     self.navController.navigationBar.barStyle = UIBarStyleBlack;
@@ -118,14 +121,8 @@
 {
     UITableViewCell* cell;
     Section* section = nil;
-    NSString* cellIdentifier = @"kHydroxideSectionCell";
-    
-    
-    cell = [self.tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    if(!cell)
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
-    
-    cell.backgroundView = [[UIView alloc] initWithFrame:cell.frame];
+    NSString* sectionCellIdentifier = @"kHydroxideSectionCell";
+    NSString* subsectionCellIdentifier = @"kHydroxideSubsectionCell";
     
     NSInteger index = indexPath.row;
     NSLog(@"Index Row: %d", index);
@@ -137,27 +134,28 @@
         indexPath.row <= self.expandedSectionIndex + [self.subsections count]) 
     {
         Subsection* subsection = [self.subsections objectAtIndex:indexPath.row - self.expandedSectionIndex - 1];
-        cell.textLabel.text = subsection.title;
-        cell.backgroundView.backgroundColor = [UIColor orangeColor];
+        SubsectionTableViewCell* subsectionCell = [self.tableView dequeueReusableCellWithIdentifier:subsectionCellIdentifier];
+        if(!subsectionCell)
+            subsectionCell = [[SubsectionTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:subsectionCellIdentifier subsection:subsection];
+        
+        cell = subsectionCell;
     }
     else
     {
-        section = [self.sections objectAtIndex:indexPath.row]; 
         if (self.expandedSectionIndex >= 0 && 
             index > self.expandedSectionIndex + [self.subsections count])
             index = index - self.expandedSectionIndex + [self.subsections count];
         section = [self.sections objectAtIndex:index];
-        cell.textLabel.text = section.title;
-        cell.backgroundView = nil;
-        cell.selectedBackgroundView.backgroundColor = [UIColor colorWithWhite:1.f alpha:0.1f];     
+        SectionTableViewCell* sectionCell = [self.tableView dequeueReusableCellWithIdentifier:sectionCellIdentifier];
+        if(!sectionCell)
+            sectionCell = [[SectionTableViewCell alloc] initWithSection:section reuseIdentifier:sectionCellIdentifier];
+        
+        cell = sectionCell;
     }
-    cell.textLabel.textAlignment = UITextAlignmentLeft;
-    cell.textLabel.backgroundColor = [UIColor clearColor];
+    
     cell.selectedBackgroundView = [[UIView alloc] initWithFrame:cell.frame];
-    
-    cell.textLabel.textColor = [UIColor whiteColor];
-    
-    
+    cell.selectedBackgroundView.backgroundColor = [UIColor colorWithWhite:0.f alpha:0.3f];
+
     return cell;
 }
 
@@ -358,7 +356,7 @@
         self.webViewController.webView.userInteractionEnabled = NO;
         
         self.gestureCatcher = [[UIView alloc] initWithFrame:self.navController.view.frame];
-        self.gestureCatcher.backgroundColor = [UIColor colorWithRed:0.3 green:0.3 blue:0.3 alpha:0.5f];
+        self.gestureCatcher.backgroundColor = [UIColor colorWithRed:0.f green:0.f blue:0.f  alpha:0.5f];
         self.gestureCatcher.alpha = 0.0f;
         
         self.panGestureRecogniser = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(moveView:)];

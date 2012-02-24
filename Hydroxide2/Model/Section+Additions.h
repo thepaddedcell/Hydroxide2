@@ -12,6 +12,8 @@
 
 - (NSURL*)url;
 - (NSURLRequest*)urlRequest;
+- (NSURL *)iconUrl;
+- (NSURLRequest*)iconUrlRequest;
 
 - (void)initWithDictionary:(NSDictionary *)dictionary andRootURLString:(NSString*)rootURLString;
 + (Section *)createSectionWithDictionary:(NSDictionary *)dictionary andRootURLString:(NSString*)rootURLString;

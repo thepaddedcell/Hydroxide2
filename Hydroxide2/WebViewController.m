@@ -9,6 +9,8 @@
 #import "WebViewController.h"
 #import "Section+Additions.h"
 #import "DataManager.h"
+#import "UIBarButtonItem+Additions.h"
+#import "DetailViewController.h"
 
 @implementation WebViewController
 
@@ -27,6 +29,8 @@
         //force the webview to load early so we can load a URL from the Parent View Controller
         self.webView.frame = self.view.bounds;
         self.offscreenWebView.frame = self.webView.frame;
+        
+        
     }
     return self;
 }
@@ -110,13 +114,11 @@
     if ([message isEqualToString:@"detail"]) 
     {
         //push a detail view onto the stack
-        UIViewController* viewController = [[UIViewController alloc] init];
-        HydroxideWebView* webView = [[HydroxideWebView alloc] initWithFrame:self.webView.frame];
-        [viewController.view addSubview:webView];
+        DetailViewController* viewController = [[DetailViewController alloc] init];
         NSString* type = [info valueForKey:@"type"];
         viewController.title = [type capitalizedString];
         NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"%@&%@", [DataManager sharedDataManager].detailURLString, [info valueForKey:@"query"]]];
-        [webView loadURL:url];
+        [viewController.webView loadURL:url];
         [self.navigationController pushViewController:viewController animated:YES];
     }
 }
